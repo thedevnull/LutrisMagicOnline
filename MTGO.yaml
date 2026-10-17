@@ -1,0 +1,80 @@
+description: ''
+game_slug: magic-the-gathering-online
+gogslug: ''
+humblestoreid: ''
+installer_slug: magic-the-gathering-online-2026-08
+name: 'Magic: The Gathering Online'
+notes: "Added performance optimization to this scripts (thedevnull on Github)\n\
+  \First launch takes longer than usual: the MTGO client itself (~640 MB) is\
+  \ not downloaded during install. The first time you click Play, setup.exe runs its\
+  \ ClickOnce bootstrapper, shows an \"Application Install - Security Warning\" dialog\
+  \ (click Install), downloads and deploys the client, then opens the login screen.\
+  \ Every later Play launches MTGO directly.\r\n\r\nRequires installing into a new,\
+  \ empty game folder \u2014 the installer will refuse to run if $GAMEDIR already\
+  \ has files in it (e.g. from a previous failed install). Remove the game from your\
+  \ Lutris library (with files) or empty the folder by hand before retrying."
+runner: wine
+script:
+  files:
+  - setup: https://mtgo.patch.daybreakgames.com/patch/mtg/live/client/setup.exe
+  game:
+    arch: win64
+    exe: $GAMEDIR/setup.exe
+    prefix: $GAMEDIR
+  installer:
+  - execute:
+      command: "if [ -n \"$(ls -A \"$GAMEDIR\" 2>/dev/null)\" ]; then\n  echo \"ERROR:\
+        \ $GAMEDIR is not empty.\"\n  echo \"This installer only supports installing\
+        \ into a new, empty folder.\"\n  echo \"Remove the existing game (with files)\
+        \ from your Lutris library, or delete the folder by hand, then reinstall.\"\
+        \n  echo \"See docs/DESIGN-NOTES.md, section 'Redoing an install', to patch\
+        \ an existing install instead of a full reinstall.\"\n  exit 1\nfi\n"
+  - task:
+      arch: win64
+      name: create_prefix
+      prefix: $GAMEDIR
+  - task:
+      app: corefonts dotnet48
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: sound=disabled
+      name: winetricks
+      prefix: $GAMEDIR
+  - task:
+      app: renderer=gdi
+      name: winetricks
+      prefix: $GAMEDIR
+  - copy:
+      dst: $GAMEDIR
+      src: setup
+  - write_file:
+      content: "#!/usr/bin/env bash\n# Re-applies the WPF flags that stop MTGO's collection\
+        \ view from\n# pinning a CPU core / freezing the UI. Safe to run any number\
+        \ of\n# times; silently does nothing if the config file isn't there yet.\n\
+        set -uo pipefail\nGAMEDIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)\"\
+        \nfind \"$GAMEDIR\" -path '*Apps/2.0*' -iname 'MTGO.exe.config' -exec sed\
+        \ -i -E \\\n  's/(\"(DisableAutomationPeer|PurgeAutomationEvents|DisableStylusInput|DisableTabletDevices)\"\
+        \ value=\")false/\\1true/g' \\\n  {} + 2>/dev/null\nexit 0\n"
+      file: $GAMEDIR/mtgo-tune.sh
+  - execute:
+      command: chmod +x $GAMEDIR/mtgo-tune.sh
+system:
+  env:
+    PROTON_NO_NTSYNC: '1'
+  limit_cpu_count: '4'
+  prelaunch_command: bash $GAMEDIR/mtgo-tune.sh
+  prelaunch_wait: true
+  single_cpu: true
+wine:
+  dxvk: false
+  esync: false
+  fsync: false
+  overrides:
+    winealsa.drv: disabled
+    winecoreaudio.drv: disabled
+    wineoss.drv: disabled
+    winepulse.drv: disabled
+steamid: null
+version: 2026-10
+year: 2002
