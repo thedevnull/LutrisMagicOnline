@@ -2,10 +2,9 @@ description: ''
 game_slug: magic-the-gathering-online
 gogslug: ''
 humblestoreid: ''
-installer_slug: magic-the-gathering-online-2026-08
+installer_slug: magic-the-gathering-online-2026-10
 name: 'Magic: The Gathering Online'
-notes: "Added performance optimization to this scripts (thedevnull on Github)\n\
-  \First launch takes longer than usual: the MTGO client itself (~640 MB) is\
+notes: "First launch takes longer than usual: the MTGO client itself (~640 MB) is\
   \ not downloaded during install. The first time you click Play, setup.exe runs its\
   \ ClickOnce bootstrapper, shows an \"Application Install - Security Warning\" dialog\
   \ (click Install), downloads and deploys the client, then opens the login screen.\
@@ -34,7 +33,7 @@ script:
       name: create_prefix
       prefix: $GAMEDIR
   - task:
-      app: corefonts dotnet48
+      app: corefonts dotnet48 d3dcompiler_47
       name: winetricks
       prefix: $GAMEDIR
   - task:
@@ -59,22 +58,26 @@ script:
       file: $GAMEDIR/mtgo-tune.sh
   - execute:
       command: chmod +x $GAMEDIR/mtgo-tune.sh
-system:
-  env:
-    PROTON_NO_NTSYNC: '1'
-  limit_cpu_count: '4'
-  prelaunch_command: bash $GAMEDIR/mtgo-tune.sh
-  prelaunch_wait: true
-  single_cpu: true
-wine:
-  dxvk: false
-  esync: false
-  fsync: false
-  overrides:
-    winealsa.drv: disabled
-    winecoreaudio.drv: disabled
-    wineoss.drv: disabled
-    winepulse.drv: disabled
+  system:
+    env:
+      PROTON_NO_NTSYNC: '1'
+      WPF_DISABLE_HW_ACCELERATION: '0'
+      __GL_THREADED_OPTIMIZATIONS: '1'
+      RADV_PERFTEST: 'sam'
+    limit_cpu_count: '4'
+    prelaunch_command: bash $GAMEDIR/mtgo-tune.sh
+    prelaunch_wait: true
+    single_cpu: true
+  wine:
+    dxvk: false
+    esync: false
+    fsync: false
+    overrides:
+      winealsa.drv: disabled
+      winecoreaudio.drv: disabled
+      wineoss.drv: disabled
+      winepulse.drv: disabled
+slug: magic-the-gathering-online-2026-10
 steamid: null
 version: 2026-10
 year: 2002
