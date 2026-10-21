@@ -2,7 +2,7 @@ description: ''
 game_slug: magic-the-gathering-online
 gogslug: ''
 humblestoreid: ''
-installer_slug: magic-the-gathering-online-2026-10
+installer_slug: magic-the-gathering-online-2026-11
 name: 'Magic: The Gathering Online'
 notes: "First launch takes longer than usual: the MTGO client itself (~640 MB) is\
   \ not downloaded during install. The first time you click Play, setup.exe runs its\
@@ -77,7 +77,7 @@ script:
       winecoreaudio.drv: disabled
       wineoss.drv: disabled
       winepulse.drv: disabled
-slug: magic-the-gathering-online-2026-10
+slug: magic-the-gathering-online-2026-11
 steamid: null
-version: 2026-10
+version: 2026-11
 year: 2002
